@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rate-limiter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rate-limiter
+  template:
+    metadata:
+      labels:
+        app: rate-limiter
+    spec:
+      containers:
+        - name: rate-limiter
+          image: rate-limiter:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: REDIS_ADDR
+              value: "redis:6379"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rate-limiter
+spec:
+  selector:
+    app: rate-limiter
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer

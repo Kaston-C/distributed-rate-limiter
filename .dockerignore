@@ -1,0 +1,32 @@
+# Go-specific
+*.exe
+*.test
+*.out
+*.log
+*.tmp
+
+# Binaries
+/bin/
+/dist/
+/build/
+
+# Git
+.git
+.gitignore
+
+# Docker files
+docker-compose.override.yml
+
+# OS / Editor / IDE files
+.DS_Store
+*.swp
+*.swo
+*.bak
+*.idea/
+.vscode/
+
+# Kubernetes manifests
+k8s/
+
+# Local Prometheus config
+prometheus.yml

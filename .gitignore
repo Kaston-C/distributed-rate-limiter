@@ -1,0 +1,40 @@
+# Go build files
+/bin/
+/build/
+/dist/
+*.exe
+*.test
+*.out
+
+# Go workspace files
+*.log
+*.cache
+*.tmp
+*.swp
+*.swo
+
+# Editor and IDE settings
+.vscode/
+.idea/
+*.code-workspace
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Docker-related
+*.tar
+
+# Kubernetes
+*.yaml~  # temp YAML files
+.kube/
+
+# Prometheus config artifacts
+prometheus-data/
+prometheus.yml.bak
+
+# Log files
+*.log
+
+# Compose override files or temp
+docker-compose.override.yml
