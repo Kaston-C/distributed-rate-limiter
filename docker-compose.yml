@@ -5,13 +5,25 @@ services:
     ports:
       - "6379:6379"
 
-  rate-limiter:
+  rate-limiter-1:
     build: .
-    container_name: rate-limiter
+    image: rate-limiter-1
+    container_name: rate-limiter-1
     depends_on:
       - redis
     ports:
-      - "8080:8080"
+      - "8081:8080"
+    environment:
+      - REDIS_ADDR=redis:6379
+
+  rate-limiter-2:
+    build: .
+    image: rate-limiter-2
+    container_name: rate-limiter-2
+    depends_on:
+      - redis
+    ports:
+      - "8082:8080"
     environment:
       - REDIS_ADDR=redis:6379
 

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: rate-limiter
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: rate-limiter
@@ -15,9 +15,10 @@ spec:
       containers:
         - name: rate-limiter
           image: rate-limiter:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
           env:
             - name: REDIS_ADDR
               value: "redis:6379"

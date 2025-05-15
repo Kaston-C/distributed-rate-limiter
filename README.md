@@ -8,9 +8,9 @@ A scalable and observable rate limiter built in **Go**, using **Redis** for cent
 ## 🚀 Features
 
 - ⚡ High-performance HTTP rate limiting
-- 📊 Real-time monitoring via Prometheus
 - 🐳 Containerized with Docker & Docker Compose
 - ☸️ Kubernetes-ready for production environments
+- 📊 Real-time monitoring via Prometheus
 - 🔁 Configurable request limits and intervals
 
 ---
@@ -33,6 +33,9 @@ I built this project as a learning exercise to get hands-on experience with **Re
                      +------------+
 ```
 
+The rate limiter is **distributed** by using **Redis as a centralized store** for request counts. Multiple instances or pods share this Redis backend and use atomic operations to update counters consistently. This ensures a **global rate limit** enforced across all running instances, whether on Docker ports or Kubernetes pods.
+
+
 ---
 
 ## ⚙️ Getting Started
@@ -54,28 +57,19 @@ docker-compose up --build
 
 Once running:
 
-* **Rate limiter endpoint**: [http://localhost:8080](http://localhost:8080)
-* **Prometheus metrics**: [http://localhost:9090](http://localhost:9090)
+* **Rate limiter endpoints**: [http://localhost:8081](http://localhost:8080) and [http://localhost:8082](http://localhost:8080)
 
 ---
 
 ### ☸️ Run with Kubernetes
 
-1. **(Optional) Build the image**
-   If you haven’t already built the Docker image using `docker-compose up --build`, run:
+1. **Build the image:**
 
 ```bash
 docker build -t rate-limiter .
 ```
 
-2. **Tag the image for Kubernetes**
-   Tag the image so Kubernetes can find it locally:
-
-```bash
-docker tag rate-limiter-rate-limiter:latest rate-limiter:latest
-```
-
-3. **Apply Kubernetes resources:**
+2. **Apply Kubernetes resources:**
 
 ```bash
 kubectl apply -f k8s/redis-deployment.yaml
@@ -83,6 +77,10 @@ kubectl apply -f k8s/rate-limiter-deployment.yaml
 kubectl apply -f k8s/prometheus-config.yaml
 kubectl apply -f k8s/prometheus-deployment.yaml
 ```
+
+Once running:
+
+* **Rate limiter endpoint**: [http://localhost:8080](http://localhost:8080)
 
 ---
 
@@ -107,6 +105,7 @@ kubectl apply -f k8s/prometheus-deployment.yaml
 ├── k8s/               # Kubernetes manifests
 ├── Dockerfile
 ├── docker-compose.yaml
+├── prometheus.yml
 ├── main.go
 └── go.mod
 ```
@@ -115,6 +114,33 @@ kubectl apply -f k8s/prometheus-deployment.yaml
 
 ## 🧪 Example Request (cURL)
 
+Simulate multiple requests to test the rate-limiting behavior. You should see a mix of `200 OK` and `429 Too Many Requests` responses once the limit is exceeded.
+
+
+---
+
+### 🐳 Docker:
+
+```bash
+curl http://localhost:8081/
+
+curl http://localhost:8082/
+```
+
+To simulate multiple requests:
+
+```bash
+for i in {1..20}; do curl -s -o /dev/null -w "Request $i: %{http_code}\n" http://localhost:8081; done
+```
+
+```bash
+for i in {1..20}; do curl -s -o /dev/null -w "Request $i: %{http_code}\n" http://localhost:8082; done
+```
+
+---
+
+### ☸️ Kubernetes:
+
 ```bash
 curl http://localhost:8080/
 ```
@@ -122,7 +148,7 @@ curl http://localhost:8080/
 To simulate multiple requests:
 
 ```bash
-for i in {1..20}; do curl -s -o /dev/null -w "Request $i: %{http_code}\n" http://localhost:8080 done
+for i in {1..20}; do curl -s -o /dev/null -w "Request $i: %{http_code}\n" http://localhost:8080; done
 ```
 
 ---
